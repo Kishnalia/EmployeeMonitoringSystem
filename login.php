@@ -2,13 +2,51 @@
 
 include 'db.php';
 session_start();
+$errorname="";
+$error="";
 if ($_SERVER["REQUEST_METHOD"] == 'POST'){
 
   $inputemail = htmlspecialchars($_POST['username']);
+  $inputpass = htmlspecialchars($_POST['password']);
+
+  if(empty($_POST['username'])){
+    $errorname ="king ina maglagay ka muna username";
+  }
+
+  if(empty($_POST['password'])){
+    $error ="wala kang password ugok";
+  }
+
+
+  if(empty($inputemail) || empty($inputpass)){
+    $error= "king ina mo!";
+    header('location:login.php');
+
+    exit();
+  }
+
+  $sql_check = "Select * from users where username = '$inputemail'";
+  $result = $conn -> query($sql_check);
+
+
+  if ($result->num_rows>0){
+    $row = $result->fetch_assoc();
+    $hash = $row['password'];
+   if(password_verify($inputpass,$hash)){
+        $_SESSION['username'] = $row['username'];
+        header('location:index.php');
+        exit();
+
+      } else {
+        $error="mali password mo ugok";
+       } 
+    } else {
+    $errorname = "bobo!";
+    }
+  }
 
 
 
-}
 
 
 
@@ -63,13 +101,13 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST'){
 		<div class="login-form">
 			<div class="sign-in-htm">
 				<div class="group">
-          <form method="post" action="index.php">
+          <form method="post" action="login.php">
 					<label for="username" class="label">Username</label>
 					<input id="username" name="username" type="text" class="input" style="margin-bottom:20px">
-		
+          <span><?php echo $errorname?></span>
 					<label for="password" class="label">Password</label>
 					<input id="password"name="password" type="password" class="input" data-type="password" style="margin-bottom:20px">
-		
+          <span><?php echo $error?></span>
 					<input type="submit" class="button" value="Sign In">
 </form>
 				</div>

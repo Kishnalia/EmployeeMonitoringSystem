@@ -1,30 +1,14 @@
 <?php
+include 'db.php';
 session_start();
 
-$password='neri';
-$username='neri';
-
-
-if ($_SERVER["REQUEST_METHOD"] == 'POST'){
-
-    $inputPass = $_POST['password'];
-    $inputUser = $_POST['username'];
-
-
-    if($inputPass == $password && $inputUser == $username)
-    {
-        $_SESSION['username'] = $inputUser;
-        header('location:index.php');
-        exit();
-    } else {
-        echo "invalid credentials";
-    }
-
-
+if(isset($_SESSION['username'])){
+    
+    echo "WELCOME " . $_SESSION['username'];
+} else
+{
+    echo "login ka muna!";
 }
-
-
-
 
 
 ?>
