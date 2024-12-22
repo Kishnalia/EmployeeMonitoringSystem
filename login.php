@@ -1,3 +1,32 @@
+<?php 
+
+include 'db.php';
+session_start();
+if ($_SERVER["REQUEST_METHOD"] == 'POST'){
+
+  $inputemail = 
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
