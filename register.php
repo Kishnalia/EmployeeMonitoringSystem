@@ -2,40 +2,52 @@
 include 'db.php';
 
 
-$errU = $userErr = "";
-$errP = $passErr = "";
+$nameError ="";
+$passwordError ="";
+
 $inputUsername = $inputPass = "";
 if($_SERVER['REQUEST_METHOD']=='POST'){
+    $inputUsername = htmlspecialchars($_POST['username']);
+    $inputPass = htmlspecialchars($_POST['password']);
+
 
     if(empty($_POST['username'])){
-        $userErr = "TANG INA MO MAGLAGAY KA NG USERNAME";
+        $nameError = "TANG INA MO MAGLAGAY KA NG USERNAME";
     } else {
-        $inputUsername = $_POST['username'];
+        if(!preg_match("/^[a-zA-z]+$/", $inputUsername)){
+            $nameError="tang ina mo  bawal hacker dito";
+        } else {
+             if (!empty($_POST['username'])){
+                $sql_checker = "Select * from users where username = '$inputUsername'";
+                $result = $conn->query($sql_checker);
+
+                if($result -> num_rows >0){
+                    $nameError = "tang ina mo meron ng username na ganyan palitan mo!";
+                }
+             }
+        }
     }
 
     if(empty($_POST['password'])){
-        $passErr = "tang ina mo maglagay ka ng password";
+        $passwordError = "tang ina mo maglagay ka ng password";
 
-    }   $inputPass = $_POST['password'];
-
-    $sql_check = "Select * from users where username = '$inputUsername'";
-    $result = $conn->query($sql_check);
-
-    if($result->num_rows > 0){
-        echo "king ina mo gumamit ka ng ibang username";
-    } else {
-        
-
-        $hashpass = password_hash($inputPass, PASSWORD_BCRYPT);
-        $sql = "insert into users (username, password) values ('$inputUsername','$hashpass')";
-        $query = $conn -> query($sql);
-        header('location: login.php');
-        exit();
-
+    }   
     
+    if (empty($nameError) && empty($passwordError)) {
+    $hash = password_hash($inputPass, PASSWORD_DEFAULT);
+    $sql = "insert into users (username , password) values ('$inputUsername','$hash')";
+
+    if($conn->query($sql)){
+    header('location:login.php');
+    exit();
+    }
     }
 
 }
+
+
+
+
 
 ?>
 
@@ -50,11 +62,11 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 <body>
     <form action="register.php" method="POST">
     <label name="username" for="username">Username</label>
-    <input name="username" type="text"><br>
-    <span><?php echo $errU;?></span>
+    <input name="username" type="text"> <span style="color:red"><?php echo $nameError;?></span><br>
+    
     <label name="password" for="password">password</label>
     <input name="password" type="password">
-    <span><?php echo $errP;?></span>
+    <span  style="color:red"> <?php echo $passwordError;?></span>
     <button type="submit">submit</button>
 
 

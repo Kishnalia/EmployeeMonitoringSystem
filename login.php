@@ -4,7 +4,7 @@ include 'db.php';
 session_start();
 if ($_SERVER["REQUEST_METHOD"] == 'POST'){
 
-  $inputemail = 
+  $inputemail = htmlspecialchars($_POST['username']);
 
 
 
